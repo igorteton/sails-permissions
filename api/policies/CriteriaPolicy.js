@@ -28,6 +28,7 @@ module.exports = function(req, res, next) {
     return next();
   }
 
+  req.query.or = req.query.or || [];
   // get all of the where clauses and blacklists into one flat array
   // if a permission has no criteria then it is always true
   var criteria = _.compact(_.flatten(
@@ -45,6 +46,10 @@ module.exports = function(req, res, next) {
 
         if (permission.relation == 'owner') {
           criteria.where.owner = req.user.id;
+        }
+
+        if (criteria.where) {
+          req.query.or.push(criteria.where)
         }
 
         return criteria;
